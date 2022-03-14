@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center">
+    <div class="alert alert-warning mt-1">
+        <legend class="border-bottom text-center">
+            {{ err_type }} ({{ err_code }})
+        </legend>
+<pre class="text-muted mb-0">
+Request Method: {{ request.method }}
+   Request URL: {{ request.build_absolute_uri }}
+</pre>
+    </div>
+</div>
+{% endblock %}

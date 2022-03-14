@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container d-flex align-items-center justify-content-center">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-0 pt-1">
+                    <h4 class="text-center">Join {{ mysite }} Today</h4>
+                </legend>
+                <div class="row">
+                    {% for field in form %}
+                    <div class="col-sm-6">
+                        {{ field|as_crispy_field }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                <button class="btn btn-success pl-5 pr-5" type="submit">
+                    Sign Up
+                </button>
+                <div class="mt-3">
+                    <a href="{% url 'signin' %}">Already Have an Account?</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
