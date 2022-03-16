@@ -127,7 +127,7 @@ class BlogVoteView(LoginRequiredMixin, View):
 
         redirect_to = request.META.get('HTTP_REFERER')
         if re.search(r'/blogs/blog/\d+/(dis)?like/vote', redirect_to):
-            return redirect(reverse('blog_details', kwargs={'pk': self.kwargs['pk']}))
+            return redirect(reverse('blog_details', kwargs={'pk': blog_id}))
         return HttpResponseRedirect(redirect_to)
 
 
