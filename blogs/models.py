@@ -29,3 +29,13 @@ class Blog(models.Model):
 
     def get_absolute_url(self):
         return reverse('create_blog')
+
+
+class BlogComment(models.Model):
+    comment = models.TextField()
+    date_commented = models.DateTimeField(default=timezone.now)
+    blog = models.ForeignKey(Blog, related_name='comment', on_delete=models.CASCADE)
+    critic = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return f"{self.blog.category} - {self.blog.title} - {self.critic}"

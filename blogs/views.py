@@ -5,8 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Blog, Category
-from .forms import BlogCreateForm, CategoryCreateForm
+from .models import Blog, Category, BlogComment
+from .forms import BlogCreateForm, CategoryCreateForm, BlogCommentForm
 from users.context_processors import global_variables
 
 
@@ -74,6 +74,20 @@ class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('user_blogs', kwargs={'username': self.request.user.username})
+
+
+class BlogCommentView(LoginRequiredMixin, CreateView):
+    model = BlogComment
+    form_class = BlogCommentForm
+    http_method_names = ['post']
+
+    def get_success_url(self):
+        return reverse('blog_details', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        form.instance.blog_id = self.kwargs['pk']
+        form.instance.critic = self.request.user
+        return super().form_valid(form)
 
 
 @login_required

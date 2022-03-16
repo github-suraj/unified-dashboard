@@ -91,7 +91,7 @@
                             <form method="POST" action="{% url 'deactivate_account' %}">
                                 {% csrf_token %}
                                 <fieldset class="form-group">
-                                    {{ du_form }}
+                                    {{ user_delete_form }}
                                 </fieldset>
                                 <div class="form-group mb-1">
                                     <div class="row">
@@ -110,7 +110,7 @@
                             <form method="POST" action="{% url 'delete_account' %}">
                                 {% csrf_token %}
                                 <fieldset class="form-group">
-                                    {{ du_form }}
+                                    {{ user_delete_form }}
                                 </fieldset>
                                 <div class="form-group">
                                     <button class="btn btn-danger" type="submit">Delete</button>

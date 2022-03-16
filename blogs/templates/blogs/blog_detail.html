@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
     <div class="content-section">
         <legend class="border-bottom my-1">
@@ -18,6 +19,45 @@
             <legend>
                 <h6>Author - {{ object.author.first_name }} {{ object.author.last_name }}</h6>
             </legend>
+        </div>
+        {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'add_comment' object.id %}">
+                {% csrf_token %}
+                <div class="row my-0">
+                    <div class="col-md-11">
+                        <fieldset class="form-group">
+                            {{ blog_comment_form|crispy }}
+                        </fieldset>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-center">
+                        <button class="btn btn-sm btn-info">Add</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+        <h5 class="mx-3" style="color:cadetblue;">All Comments ({{ object.comment.count }})</h5>
+        <div class="border my-0">
+            {% if not object.comment.all %}
+                <div class="col-sm-6 text-muted">
+                    No comments yet...
+                </div>
+            {% endif %}
+            {% for comment in object.comment.all %}
+                <div class="row text-muted mx-1 border-bottom">
+                    {% if comment.critic == object.author %}
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <h6>Author | {{ comment.date_commented }}</h6>
+                            <p>{{ comment.comment }}</p>
+                        </div>
+                    {% else %}
+                        <div class="col-sm-6">
+                            <h6>{{ comment.critic.first_name }} {{ comment.critic.last_name }} ({{ comment.critic }}) | {{ comment.date_commented }}</h6>
+                            <p>{{ comment.comment }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

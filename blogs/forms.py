@@ -1,5 +1,5 @@
 from django import forms
-from .models import Category, Blog
+from .models import Category, Blog, BlogComment
 
 def get_category_list():
     category = Category.objects.all().values_list('name', 'name')
@@ -23,3 +23,12 @@ class CategoryCreateForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+class BlogCommentForm(forms.ModelForm):
+    class Meta:
+        model = BlogComment
+        fields = ['comment']
+        widgets = {
+            'comment': forms.Textarea(attrs={'rows': 1}),
+        }
