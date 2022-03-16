@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-section">
+        <legend class="border-bottom my-1">
+            <h4>
+                <a class="text-decoration-none" href="{% url 'user_blogs' object.author %}">
+                    <img class="rounded-circle article-img" src="{{ blog.author.profile.image.url }}" width="35"/>
+                </a>
+                {{ object.category }} - {{ object.title }}
+                <span class="float-right">{{ object.date_posted }}</span>
+            </h4>
+        </legend>
+        <div class="container">
+            <p class="text-muted">{{ object.content|linebreaks }}</p>
+            {% if object.image %}
+                <img class="img-fluid border p-2" src="{{ object.image.url }}" width="600"/>
+            {% endif %}
+            <legend>
+                <h6>Author - {{ object.author.first_name }} {{ object.author.last_name }}</h6>
+            </legend>
+        </div>
+    </div>
+{% endblock %}

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from pathlib import Path
+from django.contrib.messages import constants as message_constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +33,7 @@ ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
+    'blogs.apps.BlogsConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -121,6 +123,10 @@ USE_TZ = True
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
 ]
+
+MESSAGE_TAGS = {
+    message_constants.ERROR: 'danger',
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

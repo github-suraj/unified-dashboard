@@ -20,10 +20,12 @@ from django.urls import path, include
 from . import views
 
 handler404 = views.handle_404
+handler403 = views.handle_403
 handler500 = views.handle_500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.homepage, name='home'),
+    path('', views.BlogListView.as_view(), name='home'),
     path('accounts/', include('users.urls')),
+    path('blogs/', include('blogs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
