@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
+import re
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Blog, Category, BlogComment
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
+from .models import Blog, Category, BlogComment, LikeBlog, DisLikeBlog
 from .forms import BlogCreateForm, CategoryCreateForm, BlogCommentForm
 from users.context_processors import global_variables
 
@@ -88,6 +89,46 @@ class BlogCommentView(LoginRequiredMixin, CreateView):
         form.instance.blog_id = self.kwargs['pk']
         form.instance.critic = self.request.user
         return super().form_valid(form)
+
+
+class BlogVoteView(LoginRequiredMixin, View):
+    redirect_field_name = 'next'
+
+    def get(self, request, *args, **kwargs):
+        blog_id = self.kwargs['pk']
+        opinion = self.kwargs['opinion']
+
+        blog = get_object_or_404(Blog, id=blog_id)
+
+        try:
+            # If child Like object does not exists then create
+            blog.likes
+        except Blog.likes.RelatedObjectDoesNotExist as e:
+            LikeBlog.objects.create(blog=blog)
+
+        try:
+            # If child DisLike object does not exists then create
+            blog.dis_likes
+        except Blog.dis_likes.RelatedObjectDoesNotExist as e:
+            DisLikeBlog.objects.create(blog=blog)
+
+        if opinion == 'like':
+            if request.user in blog.likes.users.all():
+                blog.likes.users.remove(request.user)
+            else:
+                blog.likes.users.add(request.user)
+                blog.dis_likes.users.remove(request.user)
+        elif opinion == 'dislike':
+            if request.user in blog.dis_likes.users.all():
+                blog.dis_likes.users.remove(request.user)
+            else:
+                blog.dis_likes.users.add(request.user)
+                blog.likes.users.remove(request.user)
+
+        redirect_to = request.META.get('HTTP_REFERER')
+        if re.search(r'/blogs/blog/\d+/(dis)?like/vote', redirect_to):
+            return redirect(reverse('blog_details', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(redirect_to)
 
 
 @login_required

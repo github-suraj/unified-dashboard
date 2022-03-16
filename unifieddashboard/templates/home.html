@@ -25,6 +25,24 @@
                     <a href="{% url 'blog_details' blog.id %}">
                         <span class="oi oi-comment-square">  {{ blog.comment.count }}</span>
                     </a>
+                    {% if request.user in blog.likes.users.all %}
+                        <a href="{% url 'vote_blog' pk=blog.id opinion='like' %}" class="text-decoration-none">
+                            <span class="oi oi-thumb-up px-2">{{ blog.likes.users.count }}</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'vote_blog' pk=blog.id opinion='like' %}" class="text-decoration-none" style="color: cadetblue;">
+                            <span class="oi oi-thumb-up px-2">{{ blog.likes.users.count }}</span>
+                        </a>
+                    {% endif %}
+                    {% if request.user in blog.dis_likes.users.all %}
+                        <a href="{% url 'vote_blog' pk=blog.id opinion='dislike' %}" class="text-decoration-none">
+                            <span class="oi oi-thumb-down px-2">{{ blog.dis_likes.users.count }}</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'vote_blog' pk=blog.id opinion='dislike' %}" class="text-decoration-none" style="color: cadetblue;">
+                            <span class="oi oi-thumb-down px-2">{{ blog.dis_likes.users.count }}</span>
+                        </a>
+                    {% endif %}
                 </div>
             </article>
         {% endfor %}

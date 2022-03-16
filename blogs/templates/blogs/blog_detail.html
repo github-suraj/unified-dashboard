@@ -35,7 +35,27 @@
                 </div>
             </form>
         {% endif %}
-        <h5 class="mx-3" style="color:cadetblue;">All Comments ({{ object.comment.count }})</h5>
+        <h5 class="mx-3" style="color:cadetblue;">
+            All Comments ({{ object.comment.count }})
+            {% if request.user in object.likes.users.all %}
+                <a href="{% url 'vote_blog' pk=object.id opinion='like' %}" class="text-decoration-none">
+                    <span class="oi oi-thumb-up px-2">{{ object.likes.users.count }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'vote_blog' pk=object.id opinion='like' %}" class="text-decoration-none" style="color: cadetblue;">
+                    <span class="oi oi-thumb-up px-2">{{ object.likes.users.count }}</span>
+                </a>
+            {% endif %}
+            {% if request.user in object.dis_likes.users.all %}
+                <a href="{% url 'vote_blog' pk=object.id opinion='dislike' %}" class="text-decoration-none">
+                    <span class="oi oi-thumb-down px-2">{{ object.dis_likes.users.count }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'vote_blog' pk=object.id opinion='dislike' %}" class="text-decoration-none" style="color: cadetblue;">
+                    <span class="oi oi-thumb-down px-2">{{ object.dis_likes.users.count }}</span>
+                </a>
+            {% endif %}
+        </h5>
         <div class="border my-0">
             {% if not object.comment.all %}
                 <div class="col-sm-6 text-muted">

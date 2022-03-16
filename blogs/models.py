@@ -35,7 +35,23 @@ class BlogComment(models.Model):
     comment = models.TextField()
     date_commented = models.DateTimeField(default=timezone.now)
     blog = models.ForeignKey(Blog, related_name='comment', on_delete=models.CASCADE)
-    critic = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    critic = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.blog.category} - {self.blog.title} - {self.critic}"
+
+
+class LikeBlog(models.Model):
+    blog = models.OneToOneField(Blog, related_name='likes', on_delete=models.CASCADE)
+    users = models.ManyToManyField(User, related_name='blog_likes')
+
+    def __str__(self):
+        return self.blog.title
+
+
+class DisLikeBlog(models.Model):
+    blog = models.OneToOneField(Blog, related_name='dis_likes', on_delete=models.CASCADE)
+    users = models.ManyToManyField(User, related_name='blog_dis_likes')
+
+    def __str__(self):
+        return self.blog.title
