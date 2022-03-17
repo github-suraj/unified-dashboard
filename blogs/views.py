@@ -22,16 +22,18 @@ class UserBlogListView(ListView):
         return global_variables(self.request)['paginate_by']
 
     def get_queryset(self):
+        category = self.kwargs.get('category')
         try:
-            user = get_object_or_404(User, username=self.kwargs.get('username'))
+            user = get_object_or_404(User, username=self.kwargs.get('username'), is_active=True)
         except:
             messages.error(self.request, f"User with username [ {self.kwargs.get('username')} ] does not exists")
             return list()
         else:
             if user == self.request.user:
-                return Blog.objects.filter(author=user).order_by('-date_posted')
+                query_set = Blog.objects.filter(author=user).order_by('-date_posted')
             else:
-                return Blog.objects.filter(author=user).filter(private=False).order_by('-date_posted')
+                query_set = Blog.objects.filter(author=user).filter(private=False).order_by('-date_posted')
+            return query_set if not category or category == 'All' else query_set.filter(category=category)
 
 
 class CategoryBlogListView(ListView):
@@ -43,13 +45,19 @@ class CategoryBlogListView(ListView):
         return global_variables(self.request)['paginate_by']
 
     def get_queryset(self):
+        category_name = self.kwargs.get('category', 'All')
         try:
-            category = get_object_or_404(Category, name=self.kwargs.get('category'))
+            if category_name != 'All':
+                category = get_object_or_404(Category, name=category_name)
         except:
             messages.error(self.request, f"Category with name [ {self.kwargs.get('category')} ] does not exists")
             return list()
         else:
-            query_set = Blog.objects.filter(category=category).order_by('-date_posted')
+            if category_name == 'All':
+                query_set = Blog.objects.filter(Q(author__in=User.objects.filter(is_active=True))).order_by('-date_posted')
+            else:
+                query_set = Blog.objects.filter(Q(author__in=User.objects.filter(is_active=True)) & Q(category=category)).order_by('-date_posted')
+
             if self.request.user.is_authenticated:
                 return query_set.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(private=False)))
             else:
@@ -70,7 +78,7 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('user_blogs', kwargs={'username': self.request.user.username})
+        return reverse('user_blogs', kwargs={'username': self.request.user.username, 'category': 'All'})
 
 
 class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -84,7 +92,7 @@ class BlogUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
     def get_success_url(self):
-        return reverse('user_blogs', kwargs={'username': self.request.user.username})
+        return reverse('user_blogs', kwargs={'username': self.request.user.username, 'category': 'All'})
 
 
 class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -97,7 +105,7 @@ class BlogDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
     def get_success_url(self):
-        return reverse('user_blogs', kwargs={'username': self.request.user.username})
+        return reverse('user_blogs', kwargs={'username': self.request.user.username, 'category': 'All'})
 
 
 class BlogCommentCreateView(LoginRequiredMixin, CreateView):
@@ -161,7 +169,7 @@ class BlogVoteView(LoginRequiredMixin, View):
                 blog.likes.users.remove(request.user)
 
         redirect_to = request.META.get('HTTP_REFERER')
-        if re.search(r'/blogs/blog/\d+/(dis)?like/vote', redirect_to):
+        if re.search(r'/blogs/\d+/(dis)?like/vote', redirect_to):
             return redirect(reverse('blog_details', kwargs={'pk': blog_id}))
         return HttpResponseRedirect(redirect_to)
 

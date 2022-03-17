@@ -62,7 +62,7 @@ class LikeBlogComment(models.Model):
     users = models.ManyToManyField(User, related_name='blog_comment_likes')
 
     def __str__(self):
-        return self.comment[:20]
+        return self.comment
 
 
 class DisLikeBlogComment(models.Model):
@@ -70,4 +70,4 @@ class DisLikeBlogComment(models.Model):
     users = models.ManyToManyField(User, related_name='blog_comment_dis_likes')
 
     def __str__(self):
-        return self.comment[:20]
+        return self.comment

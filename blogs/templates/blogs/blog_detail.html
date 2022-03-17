@@ -4,7 +4,7 @@
     <div class="content-section">
         <legend class="border-bottom my-1">
             <h4>
-                <a class="text-decoration-none" href="{% url 'user_blogs' object.author %}">
+                <a class="text-decoration-none" href="{% url 'user_blogs' username=object.author category='All' %}">
                     <img class="rounded-circle article-img" src="{{ blog.author.profile.image.url }}" width="35"/>
                 </a>
                 {{ object.category }} - {{ object.title }}

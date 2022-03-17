@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block javascript %}
+    <script src="{% static 'js/blogs.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="content-section">
         <h4 class="text-center">
-            Blogs by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})
+            <input id="username" type="hidden" value="{{ view.kwargs.username }}" />
+            <select id="user_category" class="float-left mt-1" style="font-size: 16px;">
+                {% for category in blog_categories %}
+                    <option value="{{category}}" {% if category == view.kwargs.category %}selected{% endif %}>{{category}}</option>
+                {% endfor %}
+            </select>
+            {{ view.kwargs.category }} blogs by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})
             {% if user.is_authenticated %}
                 <a class="btn btn-sm btn-success mt-1 float-right" href="{% url 'create_blog' %}">Add Blog</a>
             {% endif %}
@@ -13,7 +25,7 @@
                 <div class="media-body px-2">
                     <div class="article-metadata">
                         <h6>
-                            <a href="{% url 'user_blogs' blog.author %}">{{ blog.author.first_name }} {{ blog.author.last_name }}</a>
+                            <a href="{% url 'user_blogs' username=blog.author category='All' %}">{{ blog.author.first_name }} {{ blog.author.last_name }}</a>
                             <span class="float-right">{{ blog.date_posted|date:"F d, Y" }}</span>
                         </h6>
                     </div>

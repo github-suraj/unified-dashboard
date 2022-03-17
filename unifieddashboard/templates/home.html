@@ -14,7 +14,7 @@
                 <div class="media-body px-2">
                     <div class="article-metadata">
                         <h6>
-                            <a href="{% url 'user_blogs' blog.author %}">{{ blog.author.first_name }} {{ blog.author.last_name }}</a>
+                            <a href="{% url 'user_blogs' username=blog.author category='All' %}">{{ blog.author.first_name }} {{ blog.author.last_name }}</a>
                             <span class="float-right">{{ blog.date_posted|date:"F d, Y" }}</span>
                         </h6>
                     </div>

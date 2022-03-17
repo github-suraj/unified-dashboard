@@ -1,6 +1,8 @@
+from blogs.models import Blog
+from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic import ListView
-from blogs.models import Blog
+from django.contrib.auth.models import User
 from users.context_processors import global_variables
 
 
@@ -13,7 +15,7 @@ class BlogListView(ListView):
         return global_variables(self.request)['paginate_by']
 
     def get_queryset(self):
-        return Blog.objects.filter(private=False).order_by('-date_posted')
+        return Blog.objects.filter(Q(private=False) & Q(author__in=User.objects.filter(is_active=True))).order_by('-date_posted')
 
 
 def handle_404(request, exception):
