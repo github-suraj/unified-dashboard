@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import Category, Blog, BlogComment, LikeBlog, DisLikeBlog
+from . import models
 
 # Register your models here.
-admin.site.register(Category)
-admin.site.register(Blog)
-admin.site.register(BlogComment)
-admin.site.register(LikeBlog)
-admin.site.register(DisLikeBlog)
+admin.site.register(models.Category)
+admin.site.register(models.Blog)
+admin.site.register(models.BlogComment)
+admin.site.register(models.LikeBlog)
+admin.site.register(models.DisLikeBlog)
+admin.site.register(models.LikeBlogComment)
+admin.site.register(models.DisLikeBlogComment)

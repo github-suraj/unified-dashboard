@@ -1,14 +1,14 @@
 import re
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
 from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
-from .models import Blog, Category, BlogComment, LikeBlog, DisLikeBlog
-from .forms import BlogCreateForm, CategoryCreateForm, BlogCommentForm
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from users.context_processors import global_variables
+from .models import Blog, Category, BlogComment, LikeBlog, DisLikeBlog, LikeBlogComment, DisLikeBlogComment
+from .forms import BlogCreateForm, CategoryCreateForm, BlogCommentForm
 
 
 # Create your views here.
@@ -128,6 +128,46 @@ class BlogVoteView(LoginRequiredMixin, View):
         redirect_to = request.META.get('HTTP_REFERER')
         if re.search(r'/blogs/blog/\d+/(dis)?like/vote', redirect_to):
             return redirect(reverse('blog_details', kwargs={'pk': blog_id}))
+        return HttpResponseRedirect(redirect_to)
+
+
+class BlogCommentVoteView(LoginRequiredMixin, View):
+    redirect_field_name = 'next'
+
+    def get(self, request, *args, **kwargs):
+        comment_id = self.kwargs['pk']
+        opinion = self.kwargs['opinion']
+
+        comment = get_object_or_404(BlogComment, id=comment_id)
+
+        try:
+            # If child Like object does not exists then create
+            comment.likes
+        except BlogComment.likes.RelatedObjectDoesNotExist as e:
+            LikeBlogComment.objects.create(comment=comment)
+
+        try:
+            # If child DisLike object does not exists then create
+            comment.dis_likes
+        except BlogComment.dis_likes.RelatedObjectDoesNotExist as e:
+            DisLikeBlogComment.objects.create(comment=comment)
+
+        if opinion == 'like':
+            if request.user in comment.likes.users.all():
+                comment.likes.users.remove(request.user)
+            else:
+                comment.likes.users.add(request.user)
+                comment.dis_likes.users.remove(request.user)
+        elif opinion == 'dislike':
+            if request.user in comment.dis_likes.users.all():
+                comment.dis_likes.users.remove(request.user)
+            else:
+                comment.dis_likes.users.add(request.user)
+                comment.likes.users.remove(request.user)
+
+        redirect_to = request.META.get('HTTP_REFERER')
+        if re.search(r'/blogs/comment/\d+/(dis)?like/vote', redirect_to):
+            return redirect(reverse('blog_details', kwargs={'pk': comment.blog.id}))
         return HttpResponseRedirect(redirect_to)
 
 

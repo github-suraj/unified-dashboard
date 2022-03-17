@@ -55,3 +55,19 @@ class DisLikeBlog(models.Model):
 
     def __str__(self):
         return self.blog.title
+
+
+class LikeBlogComment(models.Model):
+    comment = models.OneToOneField(BlogComment, related_name='likes', on_delete=models.CASCADE)
+    users = models.ManyToManyField(User, related_name='blog_comment_likes')
+
+    def __str__(self):
+        return self.comment[:20]
+
+
+class DisLikeBlogComment(models.Model):
+    comment = models.OneToOneField(BlogComment, related_name='dis_likes', on_delete=models.CASCADE)
+    users = models.ManyToManyField(User, related_name='blog_comment_dis_likes')
+
+    def __str__(self):
+        return self.comment[:20]

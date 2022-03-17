@@ -23,7 +23,7 @@
                     </p>
                     <div class="row">
                         <div class="col-sm-2">
-                            <a href="{% url 'blog_details' blog.id %}">
+                            <a href="{% url 'blog_details' blog.id %}" class="text-decoration-none">
                                 <span class="oi oi-comment-square">  {{ blog.comment.count }}</span>
                             </a>
                             {% if request.user in blog.likes.users.all %}
