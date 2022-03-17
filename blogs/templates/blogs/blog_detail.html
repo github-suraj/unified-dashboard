@@ -88,6 +88,17 @@
                                         <span class="oi oi-thumb-down px-2">{{ comment.dis_likes.users.count }}</span>
                                     </a>
                                 {% endif %}
+                                {% if request.user == comment.critic %}
+                                    <div class="d-inline-flex">
+                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="my-0">
+                                            {% csrf_token %}
+                                            <input type="hidden" />
+                                            <a onclick="this.parentNode.submit()" class="text-decoration-none" style="color: red;cursor: pointer;">
+                                                <span class="oi oi-trash"></span>
+                                            </a>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </h6>
                             <p>{{ comment.comment }}</p>
                         </div>
@@ -114,8 +125,21 @@
                                         <span class="oi oi-thumb-down px-2">{{ comment.dis_likes.users.count }}</span>
                                     </a>
                                 {% endif %}
+                                {% if request.user == comment.critic %}
+                                    <div class="d-inline-flex">
+                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="my-0">
+                                            {% csrf_token %}
+                                            <input type="hidden" />
+                                            <a onclick="this.parentNode.submit()" class="text-decoration-none" style="color: red;cursor: pointer;">
+                                                <span class="oi oi-trash"></span>
+                                            </a>
+                                        </form>
+                                    </div>
+                                {% endif %}
                             </h6>
-                            <p>{{ comment.comment }}</p>
+                            <p>
+                                {{ comment.comment }}
+                            </p>
                         </div>
                     {% endif %}
                 </div>

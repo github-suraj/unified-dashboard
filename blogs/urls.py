@@ -10,8 +10,8 @@ urlpatterns = [
     path('<int:pk>/update/', views.BlogUpdateView.as_view(), name='update_blog'),
     path('<int:pk>/delete/', views.BlogDeleteView.as_view(), name='delete_blog'),
     path('blog/<int:pk>/<str:opinion>/vote', views.BlogVoteView.as_view(), name='vote_blog'),
-    path('comment/<int:pk>/add', views.BlogCommentView.as_view(), name='add_comment'),
+    path('comment/<int:pk>/add', views.BlogCommentCreateView.as_view(), name='add_comment'),
     # path('comment/<int:pk>/update', views.BlogCommentUpdateView.as_view(), name='update_comment'),
-    # path('comment/<int:pk>/delete', views.BlogCommentDeleteView.as_view(), name='delete_comment'),
+    path('comment/<int:pk>/delete', views.BlogCommentDeleteView.as_view(), name='delete_comment'),
     path('comment/<int:pk>/<str:opinion>/vote', views.BlogCommentVoteView.as_view(), name='vote_blog_comment'),
 ]
