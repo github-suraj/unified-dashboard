@@ -94,7 +94,26 @@
                     {% else %}
                         <div class="col-sm-6">
                             <h6>
-                                {{ comment.critic.first_name }} {{ comment.critic.last_name }} ({{ comment.critic }}) | {{ comment.date_commented }}
+                                {{ comment.critic.first_name }} {{ comment.critic.last_name }} ({{ comment.critic }}) |
+                                {{ comment.date_commented }} |
+                                {% if request.user in comment.likes.users.all %}
+                                    <a href="{% url 'vote_blog_comment' pk=comment.id opinion='like' %}" class="text-decoration-none">
+                                        <span class="oi oi-thumb-up px-2">{{ comment.likes.users.count }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'vote_blog_comment' pk=comment.id opinion='like' %}" class="text-decoration-none" style="color: cadetblue;">
+                                        <span class="oi oi-thumb-up px-2">{{ comment.likes.users.count }}</span>
+                                    </a>
+                                {% endif %}
+                                {% if request.user in comment.dis_likes.users.all %}
+                                    <a href="{% url 'vote_blog_comment' pk=comment.id opinion='dislike' %}" class="text-decoration-none">
+                                        <span class="oi oi-thumb-down px-2">{{ comment.dis_likes.users.count }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'vote_blog_comment' pk=comment.id opinion='dislike' %}" class="text-decoration-none" style="color: cadetblue;">
+                                        <span class="oi oi-thumb-down px-2">{{ comment.dis_likes.users.count }}</span>
+                                    </a>
+                                {% endif %}
                             </h6>
                             <p>{{ comment.comment }}</p>
                         </div>
