@@ -121,6 +121,20 @@ class BlogCommentCreateView(LoginRequiredMixin, CreateView):
         form.instance.critic = self.request.user
         return super().form_valid(form)
 
+
+class BlogCommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = BlogComment
+    form_class = BlogCommentForm
+
+    def test_func(self):
+        if self.request.user == self.get_object().critic:
+            return True
+        return False
+
+    def get_success_url(self):
+        return reverse('blog_details', kwargs={'pk': self.get_object().blog.id})
+
+
 class BlogCommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model  = BlogComment
     http_method_names = ['post']

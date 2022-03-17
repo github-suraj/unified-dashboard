@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block javascript %}
+    <script src="{% static 'js/blogs.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="content-section">
         <legend class="border-bottom my-1">
@@ -90,17 +96,38 @@
                                 {% endif %}
                                 {% if request.user == comment.critic %}
                                     <div class="d-inline-flex">
-                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="my-0">
+                                        <a id="edit_{{ comment.id }}" onclick="blogCommentUpdateShow({{ comment.id }})" class="edit-comment text-decoration-none mx-1" style="color: green;cursor: pointer;">
+                                            <span class="oi oi-pencil"></span>
+                                        </a>
+                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="mx-3">
                                             {% csrf_token %}
                                             <input type="hidden" />
-                                            <a onclick="this.parentNode.submit()" class="text-decoration-none" style="color: red;cursor: pointer;">
+                                            <a onclick="this.parentNode.submit()" class="text-decoration-none mx-1" style="color: red;cursor: pointer;">
                                                 <span class="oi oi-trash"></span>
                                             </a>
                                         </form>
                                     </div>
                                 {% endif %}
                             </h6>
-                            <p>{{ comment.comment }}</p>
+                            <p id="view_{{ comment.id }}" class="update-para">{{ comment.comment }}</p>
+                            <div id="update_{{ comment.id }}" class="update-div" style="display: none;">
+                                <form id="updateForm{{ comment.id }}" method="POST" action="{% url 'update_comment' comment.id %}" class="mx-1">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-11 pr-0">
+                                            <textarea name="comment" cols="40" rows="1" class="textarea form-control" required="" id="id_comment_{{ comment.id }}"></textarea>
+                                        </div>
+                                        <div class="col-md-1 pl-1">
+                                            <a href="javascript:{document.getElementById('updateForm{{ comment.id }}').submit();}" class="text-decoration-none" style="color: green;">
+                                                <span class="oi oi-circle-check"></span>
+                                            </a>
+                                            <a onclick="blogCommentUpdateHide({{ comment.id }})" type="button" class="text-decoration-none" style="color: red;">
+                                                <span class="oi oi-circle-x"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     {% else %}
                         <div class="col-sm-6">
@@ -127,19 +154,38 @@
                                 {% endif %}
                                 {% if request.user == comment.critic %}
                                     <div class="d-inline-flex">
-                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="my-0">
+                                        <a id="edit_{{ comment.id }}" onclick="blogCommentUpdateShow({{ comment.id }})" class="edit-comment text-decoration-none mx-1" style="color: green;cursor: pointer;">
+                                                <span class="oi oi-pencil"></span>
+                                        </a>
+                                        <form method="POST" action="{% url 'delete_comment' comment.id %}" class="mx-3">
                                             {% csrf_token %}
                                             <input type="hidden" />
-                                            <a onclick="this.parentNode.submit()" class="text-decoration-none" style="color: red;cursor: pointer;">
+                                            <a onclick="this.parentNode.submit()" class="text-decoration-none mx-1" style="color: red;cursor: pointer;">
                                                 <span class="oi oi-trash"></span>
                                             </a>
                                         </form>
                                     </div>
                                 {% endif %}
                             </h6>
-                            <p>
-                                {{ comment.comment }}
-                            </p>
+                            <p id="view_{{ comment.id }}" class="update-para">{{ comment.comment }}</p>
+                            <div id="update_{{ comment.id }}" class="update-div" style="display: none;">
+                                <form id="updateForm{{ comment.id }}" method="POST" action="{% url 'update_comment' comment.id %}" class="mx-1">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-11 pr-0">
+                                            <textarea name="comment" cols="40" rows="1" class="textarea form-control" required="" id="id_comment_{{ comment.id }}"></textarea>
+                                        </div>
+                                        <div class="col-md-1 pl-1">
+                                            <a href="javascript:{document.getElementById('updateForm{{ comment.id }}').submit();}" class="text-decoration-none" style="color: green;">
+                                                <span class="oi oi-circle-check"></span>
+                                            </a>
+                                            <a onclick="blogCommentUpdateHide({{ comment.id }})" type="button" class="text-decoration-none" style="color: red;">
+                                                <span class="oi oi-circle-x"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     {% endif %}
                 </div>

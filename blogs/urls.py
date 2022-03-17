@@ -11,7 +11,7 @@ urlpatterns = [
     path('<int:pk>/<str:opinion>/vote', views.BlogVoteView.as_view(), name='vote_blog'),
     path('category/<str:category>/view', views.CategoryBlogListView.as_view(), name='category_blogs'),
     path('comment/<int:pk>/add', views.BlogCommentCreateView.as_view(), name='add_comment'),
-    # path('comment/<int:pk>/update', views.BlogCommentUpdateView.as_view(), name='update_comment'),
+    path('comment/<int:pk>/update', views.BlogCommentUpdateView.as_view(), name='update_comment'),
     path('comment/<int:pk>/delete', views.BlogCommentDeleteView.as_view(), name='delete_comment'),
     path('comment/<int:pk>/<str:opinion>/vote', views.BlogCommentVoteView.as_view(), name='vote_blog_comment'),
 ]
