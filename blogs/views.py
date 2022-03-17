@@ -1,5 +1,6 @@
 import re
 from django.urls import reverse
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.contrib import messages
@@ -31,6 +32,28 @@ class UserBlogListView(ListView):
                 return Blog.objects.filter(author=user).order_by('-date_posted')
             else:
                 return Blog.objects.filter(author=user).filter(private=False).order_by('-date_posted')
+
+
+class CategoryBlogListView(ListView):
+    template_name = 'blogs/category_blogs.html'
+    context_object_name = 'blogs'
+
+    @property
+    def paginate_by(self):
+        return global_variables(self.request)['paginate_by']
+
+    def get_queryset(self):
+        try:
+            category = get_object_or_404(Category, name=self.kwargs.get('category'))
+        except:
+            messages.error(self.request, f"Category with name [ {self.kwargs.get('category')} ] does not exists")
+            return list()
+        else:
+            query_set = Blog.objects.filter(category=category).order_by('-date_posted')
+            if self.request.user.is_authenticated:
+                return query_set.filter(Q(author=self.request.user) | (~Q(author=self.request.user) & Q(private=False)))
+            else:
+                return query_set.filter(private=False)
 
 
 class BLogDetailView(DetailView):
