@@ -132,6 +132,8 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'danger',
 }
 
+CSRF_TRUSTED_ORIGINS = ["https://go-profile-dash.herokuapp.com"]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 STATICFILES_DIRS = [
