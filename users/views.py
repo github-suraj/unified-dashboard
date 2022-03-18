@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.safestring import mark_safe
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from .forms import UserRegisterForm, UserDeleteForm, UserUpdateForm, ProfileUpdateForm
+from verification.models import MailOTP
 
 # Create your views here.
 class MyPasswordResetConfirmView(PasswordResetConfirmView):
@@ -22,7 +23,7 @@ class MyPasswordResetConfirmView(PasswordResetConfirmView):
 
 class MyPasswordResetView(PasswordResetView):
     template_name = 'users/password_reset.html'
-    success_url = '/'
+    success_url = '/accounts/password_reset'
 
     def form_valid(self, form):
         messages.info(self.request, mark_safe('We have emailed you instructions for setting your password. \
@@ -55,12 +56,18 @@ def signup(request):
         return redirect('/accounts/profile')
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            new_user = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
-            auth.login(request, new_user)
-            messages.success(request, f'Welcome {new_user.first_name} {new_user.last_name}! Now you can update your profile.')
-            return redirect('/accounts/profile')
+        try:
+            otp = get_object_or_404(MailOTP, email=request.POST['email'], otp_type='signup', otp=request.POST['otp'])
+        except:
+            messages.error(request, f'OTP is either invalid or expired!')
+        else:
+            if form.is_valid():
+                form.save()
+                otp.delete()
+                new_user = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+                auth.login(request, new_user)
+                messages.success(request, f'Welcome {new_user.first_name} {new_user.last_name}! Now you can update your profile.')
+                return redirect('/accounts/profile')
     else:
         form = UserRegisterForm()
     return render(request, 'users/signup.html', {'form': form})

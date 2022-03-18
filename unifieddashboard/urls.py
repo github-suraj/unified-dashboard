@@ -27,5 +27,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.BlogListView.as_view(), name='home'),
     path('accounts/', include('users.urls')),
+    path('verifications/', include('verification.urls')),
     path('blogs/', include('blogs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

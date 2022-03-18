@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}""></script>
+    <script type="text/javascript" src="{% static 'js/verification.js' %}"></script>
+{% endblock %}
+
 {% block content %}
+    <div class="alert alert-success" style="display: none;">
+        We have emailed you an OPT for creating account.<br/>
+        If an account exists with the email you entered. You should receive them shortly.<br/>
+        If you don\'t receive an email in inbox, please check your spam folder.  
+    </div>
+    <div class="alert alert-danger" style="display: none;">
+        We are facing some issue in sending email with OTP, Please try again in sometime.<br/>
+        Please make sure you\'re internet connection is stable.
+    </div>
     <div class="container d-flex align-items-center justify-content-center">
         <form method="POST">
             {% csrf_token %}
@@ -15,6 +31,9 @@
                     </div>
                     {% endfor %}
                 </div>
+                <label for="otp">OTP*</label>
+                <input type="text" name="otp" required />
+                <a class="btn btn-sm btn-primary py-0" type="button" href="javascript:void(0)" onclick="generate_mail_otp('signup');">Send OTP</a>
             </fieldset>
             <div class="form-group text-center">
                 <button class="btn btn-success px-5" type="submit">

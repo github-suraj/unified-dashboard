@@ -4,6 +4,12 @@ from blogs.forms import CategoryCreateForm, BlogCommentForm
 from blogs.models import Category
 
 
+otp_type_task_mapping = {
+    'signin' : 'Login to you account',
+    'signup' : 'Create new account',
+}
+
+
 def global_variables(request):
     variables = {
         'paginate_by': 3,
