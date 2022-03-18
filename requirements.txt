@@ -2,3 +2,4 @@ Django==4.0.3
 django-crispy-forms==1.14.0
 Pillow==9.0.1
 psycopg2-binary==2.9.3
+whitenoise=6.0.0
