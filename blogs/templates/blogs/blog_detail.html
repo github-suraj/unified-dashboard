@@ -8,15 +8,18 @@
 
 {% block content %}
     <div class="content-section">
-        <legend class="border-bottom my-1">
-            <h4>
-                <a class="text-decoration-none" href="{% url 'user_blogs' username=object.author category='All' %}">
+        <div class="row border-bottom my-1">
+            <div class="col">
+                <a class="text-decoration-none" href="{% url 'user_blogs' username=object.author category='All' %}" style="position: absolute;">
                     <img class="rounded-circle article-img" src="{{ blog.author.profile.image.url }}" width="35"/>
                 </a>
-                {{ object.category }} - {{ object.title }}
-                <span class="float-right">{{ object.date_posted }}</span>
-            </h4>
-        </legend>
+                <h4 class="ml-5">{{ object.category }} - {{ object.title }}</h4>
+            </div>
+            <div class="col">
+                <span class="text-muted float-right">{{ object.date_posted }}</span>
+            </div>
+        </div>
+
         <div class="container">
             <p class="text-muted">{{ object.content|linebreaks }}</p>
             {% if object.image %}
@@ -26,12 +29,13 @@
                 <h6>Author - {{ object.author.first_name }} {{ object.author.last_name }}</h6>
             </legend>
         </div>
+
         {% if user.is_authenticated %}
             <form method="POST" action="{% url 'add_comment' object.id %}">
                 {% csrf_token %}
                 <div class="row my-0">
                     <div class="col-md-11">
-                        <fieldset class="form-group">
+                        <fieldset class="form-group my-0">
                             {{ blog_comment_form|crispy }}
                         </fieldset>
                     </div>
@@ -41,6 +45,7 @@
                 </div>
             </form>
         {% endif %}
+
         <h5 class="mx-3" style="color:cadetblue;">
             All Comments ({{ object.comment.count }})
             {% if request.user in object.likes.users.all %}
