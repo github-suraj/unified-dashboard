@@ -8,15 +8,14 @@
 {% endblock %}
 
 {% block content %}
-    <div class="alert alert-success" style="display: none;">
-        We have emailed you an OPT for creating account.<br/>
-        If an account exists with the email you entered. You should receive them shortly.<br/>
-        If you don\'t receive an email in inbox, please check your spam folder.  
-    </div>
-    <div class="alert alert-danger" style="display: none;">
-        We are facing some issue in sending email with OTP, Please try again in sometime.<br/>
-        Please make sure you\'re internet connection is stable.
-    </div>
+<!-- Modal -->
+    <dialog id="signupOTPModel" style="border: none !important; width: 40%;">
+        <a href="javascript:{document.getElementById('signupOTPModel').close()}" class="float-right">
+            <span class="oi oi-circle-x text-decoration-none"></span>
+        </a>
+        <p id="signupOTPModelText"></p>
+    </dialog>
+
     <div class="container d-flex align-items-center justify-content-center">
         <form method="POST">
             {% csrf_token %}
@@ -34,6 +33,7 @@
                 <label for="otp">OTP*</label>
                 <input type="text" name="otp" required />
                 <a class="btn btn-sm btn-primary py-0" type="button" href="javascript:void(0)" onclick="generate_mail_otp('signup');">Send OTP</a>
+                <img id="loading" class="img-fluid" src="{% static 'loading.gif' %}" width="25" style="display: none;"/>
             </fieldset>
             <div class="form-group text-center">
                 <button class="btn btn-success px-5" type="submit">

@@ -10,7 +10,7 @@ class BlogCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BlogCreateForm, self).__init__(*args, **kwargs)
-        self.fields['category'] = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None)
+        self.fields['category'] = forms.ModelChoiceField(queryset=Category.objects.all().order_by('name'), empty_label=None)
 
     class Meta:
         model = Blog
