@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'blogs.apps.BlogsConfig',
     'verification.apps.VerificationConfig',
     'crispy_forms',
+    'storages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,9 +143,6 @@ STATICFILES_DIRS = [
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-# WhiteNoise comes with a storage backend which automatically takes care of compressing your files and creating unique names for each version so they can safely be cached forever.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# If you want to apply compression but don’t want the caching behaviour then you can use
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 STATIC_ROOT = BASE_DIR / 'static'
@@ -168,3 +166,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+
+#S3 BUCKETS CONFIG
+if not DEBUG:
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_S3_CUSTOM_DOMAIN = f's3.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}'
+    DEFAULT_FILE_STORAGE = 'unifieddashboard.storage_backends.MediaStorage'

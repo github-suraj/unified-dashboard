@@ -2,7 +2,7 @@ import os
 from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import default_storage, FileSystemStorage
 
 # Create your models here.
 def upload_user_avatar(instance, filename):
@@ -28,7 +28,8 @@ class Profile(models.Model):
         ]
     )
     dob = models.DateField(blank=True, null=True)
-    image = models.ImageField(default='default.jpg', storage=OverwriteAvatar(), upload_to=upload_user_avatar)
+    # image = models.ImageField(default='default.jpg', storage=OverwriteAvatar(), upload_to=upload_user_avatar)
+    image = models.ImageField(default='default.jpg', upload_to=upload_user_avatar)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -36,7 +37,16 @@ class Profile(models.Model):
     
     def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)
-        img = Image.open(self.image.path)
-        if img.height > 300 or img.width > 300:
-            img.thumbnail((300, 300))
-            img.save(self.image.path)
+
+        image = Image.open(self.image)
+        resized_image = image.resize((300, 300), Image.ANTIALIAS)
+
+        fh = default_storage.open(self.image.name, "wb")
+        resized_image.save(fh, 'png')
+        fh.close()
+
+        # super(Profile, self).save(*args, **kwargs)
+        # img = Image.open(self.image.path)
+        # if img.height > 300 or img.width > 300:
+        #     img.thumbnail((300, 300))
+        #     img.save(self.image.path)

@@ -1,3 +1,5 @@
+import os
+import re
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -5,6 +7,16 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+def remove_special_cahrs(_str):
+    return re.sub('\W', '', _str)[:100]
+
+
+def upload_user_avatar(instance, filename):
+    file_ext = os.path.splitext(filename)[-1]
+    file_name = str(instance.id) + remove_special_cahrs(instance.title) + file_ext
+    return os.path.join('blogs', file_name)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=50)
 
@@ -19,7 +31,7 @@ class Blog(models.Model):
     category = models.CharField(max_length=50)
     title = models.CharField(max_length=100)
     content = models.TextField()
-    image = models.ImageField(upload_to='blogs', blank=True)
+    image = models.ImageField(upload_to=upload_user_avatar, blank=True)
     date_posted = models.DateTimeField(default=timezone.now)
     private = models.BooleanField(default=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
