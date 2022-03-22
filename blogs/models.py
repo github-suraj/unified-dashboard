@@ -7,13 +7,10 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-def remove_special_cahrs(_str):
-    return re.sub('\W', '', _str)[:100]
-
-
-def upload_user_avatar(instance, filename):
+def upload_blog_images(instance, filename):
     file_ext = os.path.splitext(filename)[-1]
-    file_name = str(instance.id) + remove_special_cahrs(instance.title) + file_ext
+    ref_title = re.sub('\W', '', instance.title)[:50]
+    file_name = f"{instance.author.username}_{ref_title}_{instance.date_posted.timestamp()}" + file_ext
     return os.path.join('blogs', file_name)
 
 
@@ -31,7 +28,7 @@ class Blog(models.Model):
     category = models.CharField(max_length=50)
     title = models.CharField(max_length=100)
     content = models.TextField()
-    image = models.ImageField(upload_to=upload_user_avatar, blank=True)
+    image = models.ImageField(upload_to=upload_blog_images, blank=True)
     date_posted = models.DateTimeField(default=timezone.now)
     private = models.BooleanField(default=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -41,6 +38,15 @@ class Blog(models.Model):
 
     def get_absolute_url(self):
         return reverse('create_blog')
+
+    def save(self, *args, **kwargs):
+        try:
+            this = Blog.objects.get(id=self.id)
+            if this.image != self.image:
+                this.image.delete()
+        except:
+            pass
+        super(Blog, self).save(*args, **kwargs)
 
 
 class BlogComment(models.Model):

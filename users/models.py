@@ -36,6 +36,12 @@ class Profile(models.Model):
         return f'{self.user.username} Profile'
     
     def save(self, *args, **kwargs):
+        try:
+            this = Profile.objects.get(id=self.id)
+            if this.image != self.image and this.image != 'default.jpg':
+                this.image.delete()
+        except:
+            pass
         super(Profile, self).save(*args, **kwargs)
 
         image = Image.open(self.image)
@@ -44,9 +50,3 @@ class Profile(models.Model):
         fh = default_storage.open(self.image.name, "wb")
         resized_image.save(fh, 'png')
         fh.close()
-
-        # super(Profile, self).save(*args, **kwargs)
-        # img = Image.open(self.image.path)
-        # if img.height > 300 or img.width > 300:
-        #     img.thumbnail((300, 300))
-        #     img.save(self.image.path)
