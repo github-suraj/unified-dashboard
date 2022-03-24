@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from users.forms import UserDeleteForm
 from blogs.forms import CategoryCreateForm, BlogCommentForm
 from blogs.models import Category
@@ -18,6 +19,7 @@ def global_variables(request):
         'user_delete_form': UserDeleteForm(),
         'blog_categories': sorted(['All'] + [category[0] for category in Category.objects.distinct().values_list('name')]),
         'mysite': 'Go Profile',
+        'mailto': settings.EMAIL_HOST_USER,
         'env' : os.environ['ENVIRONMENT'],
     }
     return variables

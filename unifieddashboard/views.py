@@ -12,7 +12,7 @@ class BlogListView(ListView):
 
     @property
     def paginate_by(self):
-        return global_variables(self.request)['paginate_by']
+        return global_variables(self.request)['paginate_by'] - 1
 
     def get_queryset(self):
         return Blog.objects.filter(Q(private=False) & Q(author__in=User.objects.filter(is_active=True))).order_by('-date_posted')

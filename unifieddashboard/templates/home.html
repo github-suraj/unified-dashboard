@@ -1,7 +1,60 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-<div class="row">
-    <div class="col-md-9 mt-1 mr-auto">
+<div class="text-center mt-2" style="background-color: blueviolet; color: white;font-weight: bold;">
+    <marquee width="90%" class="mt-1">
+        Welcome to {{ mysite }}, Just sign up with easy steps and start blogging.
+    </marquee>   
+</div>
+<div class="row mt-1">
+    <div class="col-md-5">
+        <div class="row mb-1" style="margin: 0 0.1mm;">
+            <legend class="text-center">
+                <h4 class="my-0">About US</h4>
+            </legend>
+            <div class="border text-muted">
+                <p class="px-2" style="font-style: italic;">
+                    Start your blog with {{ mysite }} for free. Whether you'd like to share your knowledge, experiences, latest News etc.
+                    <br/><br/>{{ mysite }} allows you to create your own blog category, also you can keep your blogs private if you don't want others to see it.
+                </p>
+            </div>
+        </div>
+        <div class="row border" style="margin: 0 0.1mm;">
+            <div class="col-md-6 my-2">
+                <div class="card">
+                    <a class="btn-sm text-decoration-none" href="https://www.linkedin.com/in/suraj-jaiswal-9b8892a2/" target="blank">
+                        <img class="card-img-top rounded" src="{% static 'contributor.jpg' %}">
+                        <div class="card-body p-2">
+                            <h6 class="card-text">Suraj Jaiswal</h6>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6 my-auto">
+                <a class="btn btn-sm btn-block btn-info mb-1" href="mailto:{{ mailto }}">Contact US</a>
+                <form method="GET" action="/">
+                    <!-- {% csrf_token %} -->
+                    <fieldset class="form-group mb-1">
+                        <input type="hidden">
+                    </fieldset>
+                    <div class="form-group mb-1">
+                        <button class="btn btn-sm btn-block btn-info">Report an Issue</button>
+                    </div>
+                </form>
+                <form method="GET" action="/">
+                    <!-- {% csrf_token %} -->
+                    <fieldset class="form-group mb-1">
+                        <input type="hidden">
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-sm btn-block btn-info">Suggesions / Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
         <h4 class="text-center">
             Latest Blogs
             {% if user.is_authenticated %}
@@ -56,7 +109,7 @@
             {% for num in page_obj.paginator.page_range %}
                 {% if page_obj.number == num %}
                     <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-                {% elif num > page_obj.number|add:'-{{ paginate_by ]}}' and num < page_obj.number|add:'{{ paginate_by }}' %}
+                {% elif num > page_obj.number|add:'-{{ paginate_by }}' and num < page_obj.number|add:'{{ paginate_by }}' %}
                     <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
                 {% endif %}
             {% endfor %}
@@ -67,6 +120,5 @@
             {% endif %}
         {% endif %}
     </div>
-    <div class="col-md-3"></div>
 </div>
 {% endblock %}

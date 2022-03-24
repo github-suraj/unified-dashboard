@@ -23,7 +23,7 @@ def send_otp(request, email, otp_type, otp):
     send_mail(
         f'[ {mysite} ] - OTP Request',
         otp,
-        settings.EMAIL_HOST_USER,
+        'Go Profile<noreply@goprofile.com>',
         [email],
         fail_silently=False,
         html_message=message
