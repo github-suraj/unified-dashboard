@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="text-center mt-2" style="background-color: blueviolet; color: white;font-weight: bold;">
+<div class="text-center mt-1 mb-3" style="background-color: blueviolet; color: white;font-weight: bold;">
     <marquee width="90%" class="mt-1">
         Welcome to {{ mysite }}, Just sign up with easy steps and start blogging.
     </marquee>   
@@ -26,31 +26,16 @@
                     <a class="btn-sm text-decoration-none" href="https://www.linkedin.com/in/suraj-jaiswal-9b8892a2/" target="blank">
                         <img class="card-img-top rounded" src="{% static 'contributor.jpg' %}">
                         <div class="card-body p-2">
-                            <h6 class="card-text">Suraj Jaiswal</h6>
+                            <h6 class="card-text">Suraj Jaiswal's Profile</h6>
                         </div>
                     </a>
                 </div>
             </div>
             <div class="col-md-6 my-auto">
                 <a class="btn btn-sm btn-block btn-info mb-1" href="mailto:{{ mailto }}">Contact US</a>
-                <form method="GET" action="/">
-                    <!-- {% csrf_token %} -->
-                    <fieldset class="form-group mb-1">
-                        <input type="hidden">
-                    </fieldset>
-                    <div class="form-group mb-1">
-                        <button class="btn btn-sm btn-block btn-info">Report an Issue</button>
-                    </div>
-                </form>
-                <form method="GET" action="/">
-                    <!-- {% csrf_token %} -->
-                    <fieldset class="form-group mb-1">
-                        <input type="hidden">
-                    </fieldset>
-                    <div class="form-group">
-                        <button class="btn btn-sm btn-block btn-info">Suggesions / Feedback</button>
-                    </div>
-                </form>
+                <a class="btn btn-sm btn-block btn-info mb-1" href="{% url 'submit_query' %}">Ask a Query</a>
+                <a class="btn btn-sm btn-block btn-info mb-1" href="{% url 'submit_issue' %}">Report an Issue</a>
+                <a class="btn btn-sm btn-block btn-info mb-1" href="{% url 'submit_feedback' %}">Suggesions / Feedback</a>
             </div>
         </div>
     </div>

@@ -29,6 +29,7 @@ urlpatterns = [
     path('accounts/', include('users.urls')),
     path('verifications/', include('verification.urls')),
     path('blogs/', include('blogs.urls')),
+    path('services/', include('support.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group mb-0">
+                <legend class="mb-0">
+                    <h4 class="text-center">{{ legend }}</h4>
+                </legend>
+                <div class="row">
+                    {% for field in form %}
+                        <div class="{% if field.label|re_search:'Description|Title' %}col-sm-12{% else %}col-sm-6{% endif %}">
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                <button class="btn btn-info px-5" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

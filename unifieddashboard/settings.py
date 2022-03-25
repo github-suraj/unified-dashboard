@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['localhost', '.herokuapp.com', '.researchthroughdesign.org']
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'blogs.apps.BlogsConfig',
+    'support.apps.SupportConfig',
     'verification.apps.VerificationConfig',
     'crispy_forms',
     'storages',
