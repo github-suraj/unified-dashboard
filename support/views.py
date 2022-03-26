@@ -1,9 +1,18 @@
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from . import models
+from .forms import FeedbackCommentForm, IssueCommentForm, QueryCommentForm
 
 # Create your views here.
+class SupportUserPassesTestMixin(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user == self.get_object().author or self.request.user.is_superuser:
+            return True
+        return False
+
+
 class IssueCreateView(LoginRequiredMixin, CreateView):
     legend = 'Report Your Issue'
     model = models.Issue
@@ -69,16 +78,58 @@ class FeedbackCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class IssueDetailView(LoginRequiredMixin, DetailView):
+class IssueDetailView(LoginRequiredMixin, SupportUserPassesTestMixin, DetailView):
     model = models.Issue
     template_name = 'support/issue_detail.html'
 
 
-class QueryDetailView(LoginRequiredMixin, DetailView):
+class QueryDetailView(LoginRequiredMixin, SupportUserPassesTestMixin, DetailView):
     model = models.Query
     template_name = 'support/query_detail.html'
 
 
-class FeedbackDetailView(LoginRequiredMixin, DetailView):
+class FeedbackDetailView(LoginRequiredMixin, SupportUserPassesTestMixin, DetailView):
     model = models.Feedback
     template_name = 'support/feedback_detail.html'
+
+
+class IssueCommentCreateView(LoginRequiredMixin, CreateView):
+    model = models.IssueComment
+    form_class = IssueCommentForm
+    http_method_names = ['post']
+
+    def get_success_url(self):
+        return reverse('issue_details', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        form.instance.issue_id = self.kwargs['pk']
+        form.instance.critic = self.request.user
+        return super().form_valid(form)
+
+
+class QueryCommentCreateView(LoginRequiredMixin, CreateView):
+    model = models.QueryComment
+    form_class = QueryCommentForm
+    http_method_names = ['post']
+
+    def get_success_url(self):
+        return reverse('query_details', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        form.instance.query_id = self.kwargs['pk']
+        form.instance.critic = self.request.user
+        return super().form_valid(form)
+
+
+class FeedbackCommentCreateView(LoginRequiredMixin, CreateView):
+    model = models.FeedbackComment
+    form_class = FeedbackCommentForm
+    http_method_names = ['post']
+
+    def get_success_url(self):
+        return reverse('feedback_details', kwargs={'pk': self.kwargs['pk']})
+
+    def form_valid(self, form):
+        form.instance.feedback_id = self.kwargs['pk']
+        form.instance.critic = self.request.user
+        return super().form_valid(form)

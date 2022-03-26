@@ -17,5 +17,53 @@
     {% if object.actioned %}
         <span class="float-right" style="color:green">Actioned on : {{ object.date_actioned }}</span>
     {% endif %}
+
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'add_feedback_comment' object.id %}">
+            {% csrf_token %}
+            <div class="row mt-5">
+                <div class="col-md-11">
+                    <fieldset class="form-group my-0">
+                        <textarea name="comment" cols="40" rows="1" class="textarea form-control" required id="id_comment"></textarea>
+                    </fieldset>
+                </div>
+                <div class="col-md-1 d-flex align-items-center">
+                    <button class="btn btn-sm btn-info">Reply</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+    <h5 class="mx-3 mt-3" style="color:cadetblue;">
+        All Messages ({{ object.comment.count }})
+    </h5>
+    <div class="border my-0">
+        {% if not object.comment.all %}
+            <div class="col-sm-6 text-muted">
+                No Messages yet...
+            </div>
+        {% endif %}
+        {% for comment in object.comment.all %}
+            <div class="row text-muted mx-1 border-bottom">
+                {% if comment.critic == object.author %}
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6">
+                        <h6>
+                            Author | {{ comment.date_commented }}
+                        </h6>
+                        <p class="update-para">{{ comment.comment }}</p>
+                    </div>
+                {% else %}
+                    <div class="col-sm-6">
+                        <h6>
+                            {{ comment.critic.first_name }} {{ comment.critic.last_name }} ({{ comment.critic }}) |
+                            {{ comment.date_commented }}
+                        </h6>
+                        <p class="update-para">{{ comment.comment }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
