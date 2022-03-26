@@ -2,3 +2,26 @@ h1, h2, h3, h4, h5, h6 {
     color:darkblue;
     font-style: italic;
 }
+
+.form-group-view label {
+    padding: 0.175rem 0.35rem;
+    color: whitesmoke;
+    background-color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.form-group-view input {
+    height: calc(1.5em + 0.35rem + 2px);
+    padding: 0.175rem 0.35rem;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.form-group-view textarea {
+    padding: 0.175rem 0.35rem;
+    color: #495057;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}

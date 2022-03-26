@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="container my-2">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>{{ object.category }} - {{ object.author.first_name }} {{ object.author.last_name }}</h4>
+        </div>
+        <div class="col-sm-6">
+            <span class="text-muted float-right">{{ object.date_posted }}</span>
+        </div>
+    </div>
+    <div class="row form-group-view">
+        <textarea class="col-12 mx-3" readonly rows="{{ object.description|textarea_rows }}">{{ object.description }}</textarea>
+    </div>
+    {% if object.actioned %}
+        <span class="float-right" style="color:green">Actioned on : {{ object.date_actioned }}</span>
+    {% endif %}
+</div>
+{% endblock %}

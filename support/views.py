@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView
 from . import models
 
 # Create your views here.
@@ -67,3 +67,18 @@ class FeedbackCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class IssueDetailView(LoginRequiredMixin, DetailView):
+    model = models.Issue
+    template_name = 'support/issue_detail.html'
+
+
+class QueryDetailView(LoginRequiredMixin, DetailView):
+    model = models.Query
+    template_name = 'support/query_detail.html'
+
+
+class FeedbackDetailView(LoginRequiredMixin, DetailView):
+    model = models.Feedback
+    template_name = 'support/feedback_detail.html'

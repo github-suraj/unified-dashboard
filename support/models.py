@@ -10,7 +10,7 @@ def upload_issue_images(instance, filename):
     file_ext = os.path.splitext(filename)[-1]
     ref_title = re.sub('\W', '', instance.short_description)[:50]
     file_name = f"{instance.author.username}_{ref_title}_{instance.create_date.timestamp()}" + file_ext
-    return os.path.join('support', instance.category.replace(' ', ''), file_name)
+    return os.path.join('support', instance.category.name.replace(' ', ''), file_name)
 
 
 def default_user():
@@ -63,9 +63,9 @@ class Issue(models.Model):
     short_description = models.CharField(max_length=100)
     long_description = models.TextField()
     image = models.ImageField(upload_to=upload_issue_images, blank=True)
-    create_date = models.DateField(default=timezone.now)
-    due_date = models.DateField(blank=True, null=True)
-    close_date = models.DateField(blank=True, null=True)
+    create_date = models.DateTimeField(default=timezone.now)
+    due_date = models.DateTimeField(blank=True, null=True)
+    close_date = models.DateTimeField(blank=True, null=True)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT, default=Status.get_default_status)
 
     def __str__(self):
@@ -99,8 +99,8 @@ class Query(models.Model):
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    open_date = models.DateField(default=timezone.now)
-    close_date = models.DateField(blank=True, null=True)
+    open_date = models.DateTimeField(default=timezone.now)
+    close_date = models.DateTimeField(blank=True, null=True)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT, default=Status.get_default_status)
 
     def __str__(self):
@@ -124,8 +124,8 @@ class Feedback(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=default_user)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
     description = models.TextField()
-    date_posted = models.DateField(default=timezone.now)
-    date_actioned = models.DateField(blank=True, null=True)
+    date_posted = models.DateTimeField(default=timezone.now)
+    date_actioned = models.DateTimeField(blank=True, null=True)
     actioned = models.BooleanField(default=False)
 
     def __str__(self):

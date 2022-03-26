@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="container my-2">
+    {% if object.image %}
+    <div class="row">
+        <small class="mx-3">
+            <span class="oi oi-link-intact"></span>
+            <a href="{{ object.image.url }}">{{ object.image }}</a>
+        </small>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group-view my-2">
+                <label class="col-sm-3">Requested By</label>
+                <input class="col-sm-8" value="{{ object.author.first_name }} {{ object.author.last_name }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-3">Requestor ID</label>
+                <input class="col-sm-8" value="{{ object.author }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-3">Category</label>
+                <input class="col-sm-8" value="{{ object.category }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-3">Platform</label>
+                <input class="col-sm-8" value="{{ object.platform }}" readonly />
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group-view my-2">
+                <label class="col-sm-4">Request Open Date</label>
+                <input class="col-sm-7" value="{{ object.create_date }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-4">Due Date (ETA)</label>
+                <input class="col-sm-7" value="{{ object.due_date|default_if_none:'' }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-4">Request Close Date</label>
+                <input class="col-sm-7" value="{{ object.close_date|default_if_none:'' }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-4">Priority</label>
+                <input class="col-sm-7" value="{{ object.priority }}" readonly />
+            </div>
+            <div class="form-group-view my-2">
+                <label class="col-sm-4">Status</label>
+                <input class="col-sm-7" value="{{ object.status }}" readonly />
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3 form-group-view">
+        <label class="col-sm-3 mx-3">Short Description</label>
+        <input class="col-sm-8 mx-3" value="{{ object.short_description }}" readonly />
+    </div>
+
+    <div class="row form-group-view">
+        <label class="col-sm-3 mx-3" style="height: 33px;">Long Description</label>
+        <textarea class="col-sm-8 mx-3" readonly rows="{{ object.long_description|textarea_rows }}">{{ object.long_description }}</textarea>
+    </div>
+</div>
+{% endblock %}
