@@ -21,5 +21,6 @@ def global_variables(request):
         'mysite': 'Go Profile',
         'mailto': settings.EMAIL_HOST_USER,
         'env' : os.environ['ENVIRONMENT'],
+        'close_status_list': ('CLOSED', 'RESOLVED', 'CANCELLED')
     }
     return variables

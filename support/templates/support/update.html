@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group mb-0">
+                <div class="row border-bottom my-2">
+                    <div class="col-sm-6">
+                        <h4>
+                            {{ object.category }} | {{ object.author.first_name }} {{ object.author.last_name }} ( {{ object.author }} )
+                        </h4>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted float-right">{{ object.create_date }}</span>
+                        <span class="text-muted float-right">{{ object.open_date }}</span>
+                        <span class="text-muted float-right">{{ object.date_posted }}</span>
+                    </div>
+                </div>
+                {% if object.image %}
+                    <div class="row mb-2">
+                        <small class="mx-3">
+                            <span class="oi oi-link-intact"></span>
+                            <a href="{{ object.image.url }}" target="blank">{{ object.image }}</a>
+                        </small>
+                    </div>
+                {% endif %}
+                {% if legend == 'Issue' %}
+                    <div class="row my-3 form-group-view">
+                        <label class="col-sm-3 mx-3">Platform</label>
+                        <input class="col-sm-8 mx-3" value="{{ object.platform }}" readonly />
+                    </div>
+                    <div class="row my-3 form-group-view">
+                        <label class="col-sm-3 mx-3">Short Description</label>
+                        <input class="col-sm-8 mx-3" value="{{ object.short_description }}" readonly />
+                    </div>
+                    <div class="row form-group-view">
+                        <label class="col-sm-3 mx-3" style="height: 33px;">Long Description</label>
+                        <textarea class="col-sm-8 mx-3" readonly rows="{{ object.long_description|textarea_rows }}">{{ object.long_description }}</textarea>
+                    </div>
+                {% elif legend == 'Query' %}
+                    <div class="row my-3 form-group-view">
+                        <label class="col-sm-3 mx-3">Title</label>
+                        <input class="col-sm-8 mx-3" value="{{ object.title }}" readonly />
+                    </div>
+                    <div class="row form-group-view">
+                        <label class="col-sm-3 mx-3" style="height: 33px;">Description</label>
+                        <textarea class="col-sm-8 mx-3" readonly rows="{{ object.description|textarea_rows }}">{{ object.description }}</textarea>
+                    </div>
+                {% elif legend == 'Feedback' %}
+                    <div class="row form-group-view">
+                        <label class="col-sm-3 mx-3" style="height: 33px;">Description</label>
+                        <textarea class="col-sm-8 mx-3" readonly rows="{{ object.description|textarea_rows }}">{{ object.description }}</textarea>
+                    </div>
+                {% endif %}
+                <div class="row mt-5">
+                    <div class="col-sm-12">
+                        <h6 style="color:cadetblue;">
+                            <a href="{% url details_url object.id %}">All Messages ({{ object.comment.count }})</a>
+                        </h6>
+                    </div>
+                </div>
+                <div class="row border-top mt-1">
+                    {% for field in form %}
+                        <div class="{% if field.label|re_search:'Description|Title' %}col-sm-12{% else %}col-sm-6{% endif %}">
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <div class="form-group text-center">
+                <button class="btn btn-info px-5" type="submit" {% if object.status.name in close_status_list or object.actioned %}disabled{% endif %}>
+                    Update {{ legend }}
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

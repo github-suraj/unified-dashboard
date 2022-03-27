@@ -1,9 +1,11 @@
 from django import forms
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from . import models
 from .forms import FeedbackCommentForm, IssueCommentForm, QueryCommentForm
+from users.context_processors import global_variables
+
 
 # Create your views here.
 class SupportUserPassesTestMixin(UserPassesTestMixin):
@@ -11,6 +13,13 @@ class SupportUserPassesTestMixin(UserPassesTestMixin):
         if self.request.user == self.get_object().author or self.request.user.is_superuser:
             return True
         return False
+
+
+class UpdateUserPassesTestMixin(UserPassesTestMixin):
+    def test_func(self):
+        if self.get_object().status.name in global_variables(self.request)['close_status_list'] and self.request.method == 'POST':
+            return False
+        return True
 
 
 class IssueCreateView(LoginRequiredMixin, CreateView):
@@ -76,6 +85,75 @@ class FeedbackCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class IssueUpdateView(LoginRequiredMixin, UpdateUserPassesTestMixin, UpdateView):
+    model = models.Issue
+    legend = 'Issue'
+    details_url = 'issue_details'
+    template_name = 'support/update.html'
+    fields = ('priority', 'due_date', 'status', 'close_date')
+    
+    def get_success_url(self):
+        return reverse('issue_details', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super(IssueUpdateView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'details_url': self.details_url})
+        return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['due_date'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
+        form.fields['close_date'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
+        return form
+
+
+class QueryUpdateView(LoginRequiredMixin, UpdateUserPassesTestMixin, UpdateView):
+    model = models.Query
+    legend = 'Query'
+    details_url = 'query_details'
+    template_name = 'support/update.html'
+    fields = ('status', 'close_date')
+    
+    def get_success_url(self):
+        return reverse('query_details', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super(QueryUpdateView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'details_url': self.details_url})
+        return context
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['close_date'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
+        return form
+
+
+class FeedbackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = models.Feedback
+    legend = 'Feedback'
+    details_url = 'feedback_details'
+    template_name = 'support/update.html'
+    fields = ('actioned', 'date_actioned')
+    
+    def get_success_url(self):
+        return reverse('feedback_details', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super(FeedbackUpdateView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'details_url': self.details_url})
+        return context
+
+    def test_func(self):
+        if self.get_object().actioned == True and self.request.method == 'POST':
+            return False
+        return True
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['date_actioned'].widget = forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
+        return form
 
 
 class IssueDetailView(LoginRequiredMixin, SupportUserPassesTestMixin, DetailView):
