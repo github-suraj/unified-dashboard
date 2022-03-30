@@ -71,14 +71,14 @@ class Issue(models.Model):
     def __str__(self):
         return f"{self.category} - {self.short_description}"
 
-    def save(self, *args, **kwargs):
-        try:
-            this = Issue.objects.get(id=self.id)
-            if this.image != self.image:
-                this.image.delete()
-        except:
-            pass
-        super(Issue, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     try:
+    #         this = Issue.objects.get(id=self.id)
+    #         if this.image != self.image:
+    #             this.image.delete()
+    #     except:
+    #         pass
+    #     super(Issue, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('home')
