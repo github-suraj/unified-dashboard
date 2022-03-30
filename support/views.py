@@ -1,6 +1,6 @@
 from django import forms
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from . import models
 from .forms import FeedbackCommentForm, IssueCommentForm, QueryCommentForm
@@ -22,6 +22,75 @@ class UpdateUserPassesTestMixin(UserPassesTestMixin):
         elif self.request.method == 'POST' and self.request.user.is_superuser:
             return True if self.get_object().status.name not in global_variables(self.request)['close_status_list'] else False
         return False
+
+
+class IssueListView(LoginRequiredMixin, ListView):
+    legend = 'Reported Issues'
+    create_url = 'submit_issue'
+    update_url = 'update_issue'
+    details_url = 'issue_details'
+    template_name = 'support/services.html'
+    context_object_name = 'objects'
+
+    @property
+    def paginate_by(self):
+        return global_variables(self.request)['paginate_by']
+
+    def get_context_data(self, **kwargs):
+        context = super(IssueListView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'create_url': self.create_url, 'update_url': self.update_url ,'details_url': self.details_url})
+        return context
+
+    def get_queryset(self):
+        if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
+            return models.Issue.objects.all().order_by('-create_date')
+        return models.Issue.objects.filter(author=self.request.user).order_by('-create_date')
+
+
+class QueryListView(LoginRequiredMixin, ListView):
+    legend = 'All Queries'
+    create_url = 'submit_query'
+    update_url = 'update_query'
+    details_url = 'query_details'
+    template_name = 'support/services.html'
+    context_object_name = 'objects'
+
+    @property
+    def paginate_by(self):
+        return global_variables(self.request)['paginate_by']
+
+    def get_context_data(self, **kwargs):
+        context = super(QueryListView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'create_url': self.create_url, 'update_url': self.update_url ,'details_url': self.details_url})
+        return context
+
+    def get_queryset(self):
+        if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
+            return models.Query.objects.all().order_by('-open_date')
+        return models.Query.objects.filter(author=self.request.user).order_by('-open_date')
+
+
+class FeedbackListView(LoginRequiredMixin, ListView):
+    legend = 'Suggestions / Feedback'
+    create_url = 'submit_feedback'
+    update_url = 'update_feedback'
+    details_url = 'feedback_details'
+    template_name = 'support/services.html'
+    context_object_name = 'objects'
+
+    @property
+    def paginate_by(self):
+        return global_variables(self.request)['paginate_by']
+
+    def get_context_data(self, **kwargs):
+        context = super(FeedbackListView, self).get_context_data(**kwargs)
+        context.update({'legend': self.legend, 'create_url': self.create_url, 'update_url': self.update_url ,'details_url': self.details_url})
+        return context
+
+    def get_queryset(self):
+        if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
+            return models.Feedback.objects.all().order_by('-date_posted')
+        return models.Feedback.objects.filter(author=self.request.user).order_by('-date_posted')
 
 
 class IssueCreateView(LoginRequiredMixin, CreateView):

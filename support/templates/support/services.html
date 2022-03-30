@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-section">
+    <h4 class="text-center">
+        {{ legend }} ( {{ objects.count }} )
+        <a class="float-right pt-2 pr-3 text-decoration-none" href="{% url create_url %}" style="font-size: 18px;color: green;">
+            <span class="oi oi-plus"></span>
+        </a>
+    </h4>
+    {% for object in objects %}
+        <div class="card m-2" style="width: 100%;">
+            <div class="card-body p-2">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5 class="card-title">{{ object.category }} |
+                            {{ object.author.first_name }} {{ object.author.last_name }} ( {{ object.author }} )
+                        </h5>
+                    </div>
+                    <div class="col-sm-6">
+                        {% if legend == 'Reported Issues' %}
+                            <span class="float-right">{{ object.create_date|date:"F d, Y" }}</span>
+                        {% elif legend == 'All Queries' %}
+                            <span class="float-right">{{ object.open_date|date:"F d, Y" }}</span>
+                        {% elif legend == 'Suggestions / Feedback' %}
+                            <span class="float-right">{{ object.date_posted|date:"F d, Y" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <h6 class="card-subtitle">
+                    {% if legend == 'Reported Issues' %}
+                        {{ object.short_description }}
+                    {% elif legend == 'All Queries' %}
+                        {{ object.title }}
+                    {% endif %}
+                </h6>
+                <p class="card-text pt-2 pl-3">
+                    {% if legend == 'Reported Issues' %}
+                        {{ object.long_description|truncatechars:125 }}
+                    {% elif legend == 'All Queries' %}
+                        {{ object.description|truncatechars:125 }}
+                    {% elif legend == 'Suggestions / Feedback' %}
+                        {{ object.description|truncatechars:125 }}
+                    {% endif %}
+                </p>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h6 style="color:cadetblue;">
+                            <a href="{% url details_url object.id %}">All Messages ({{ object.comment.count }})</a>
+                        </h6>
+                    </div>
+                    <div class="col-sm-6">
+                        {% if user.is_superuser and object.status.name not in close_status_list and not object.actioned %}
+                            <a class="btn btn-sm btn-outline-primary py-0 float-right" href="{% url update_url object.id %}">Update</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Privous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-{{ paginate_by ]}}' and num < page_obj.number|add:'{{ paginate_by }}' %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -29,7 +29,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ml-auto">
-                        <div class="dropdown show">
+                        <div class="dropdown show m-1">
                             <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Blogs</a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                 {% if user.is_authenticated %}
@@ -39,8 +39,35 @@
                             </div>
                         </div>
                         {% if user.is_authenticated %}
+                            <div class="dropdown show m-1">
+                                <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Services</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="{% url 'myissues' %}">My Issues</a>
+                                    <a class="dropdown-item" href="{% url 'myqueries' %}">My Queries</a>
+                                    <a class="dropdown-item" href="{% url 'myfeedbacks' %}">My Feedbacks</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if user.is_authenticated %}
                             {% if user.is_superuser %}
-                                <a class="nav-link" href="/admin">Admin</a>
+                                <div class="dropdown show m-1">
+                                    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item" href="/admin">Admin Controls</a>
+                                        <form method="GET" action="{% url 'myissues' %}">
+                                            <input type="hidden" name="admin" value="true" />
+                                            <a class="dropdown-item" href="#" onclick="this.parentNode.submit()">All Issues</a>
+                                        </form>
+                                        <form method="GET" action="{% url 'myqueries' %}">
+                                            <input type="hidden" name="admin" value="true" />
+                                            <a class="dropdown-item" href="#" onclick="this.parentNode.submit()">All Queries</a>
+                                        </form>
+                                        <form method="GET" action="{% url 'myfeedbacks' %}">
+                                            <input type="hidden" name="admin" value="true" />
+                                            <a class="dropdown-item" href="#" onclick="this.parentNode.submit()">All Feedbacks</a>
+                                        </form>
+                                    </div>
+                                </div>
                             {% endif %}
                             <div class="dropdown">
                                 <a class="btn" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('issues', views.IssueListView.as_view(), name='myissues'),
+    path('queries', views.QueryListView.as_view(), name='myqueries'),
+    path('feedbacks', views.FeedbackListView.as_view(), name='myfeedbacks'),
     path('issue/submit', views.IssueCreateView.as_view(), name='submit_issue'),
     path('query/submit', views.QueryCreateView.as_view(), name='submit_query'),
     path('feedback/submit', views.FeedbackCreateView.as_view(), name='submit_feedback'),
