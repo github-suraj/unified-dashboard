@@ -17,9 +17,11 @@ class SupportUserPassesTestMixin(UserPassesTestMixin):
 
 class UpdateUserPassesTestMixin(UserPassesTestMixin):
     def test_func(self):
-        if self.get_object().status.name in global_variables(self.request)['close_status_list'] and self.request.method == 'POST':
-            return False
-        return True
+        if self.request.method == 'GET' and self.request.user.is_superuser:
+            return True
+        elif self.request.method == 'POST' and self.request.user.is_superuser:
+            return True if self.get_object().status.name not in global_variables(self.request)['close_status_list'] else False
+        return False
 
 
 class IssueCreateView(LoginRequiredMixin, CreateView):
@@ -146,9 +148,11 @@ class FeedbackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
     def test_func(self):
-        if self.get_object().actioned == True and self.request.method == 'POST':
-            return False
-        return True
+        if self.request.method == 'GET' and self.request.user.is_superuser:
+            return True
+        elif self.request.method == 'POST' and self.request.user.is_superuser:
+            return True if not self.get_object().actioned else False
+        return False
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
