@@ -1,13 +1,56 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/services.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <div class="content-section">
-    <h4 class="text-center">
-        {{ legend }} ( {{ objects.count }} )
-        <a class="float-right pt-2 pr-3 text-decoration-none" href="{% url create_url %}" style="font-size: 18px;color: green;">
-            <span class="oi oi-plus"></span>
-        </a>
-    </h4>
+    <div class="row mt-1 px-3">
+        <div class="col-sm-2">
+            <div class="form-group mb-0">
+                <label for="service_categories">Category</label>
+                <select class="select form-control" id="service_categories">
+                    {% for category in service_categories %}
+                        <option value="{{category}}" {% if category == request.GET.category %}selected{% endif %}>{{category}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            {% if legend == 'Reported Issues' or legend == 'All Queries' %}
+                <div class="form-group mb-0">
+                    <label for="service_statuses">Status</label>
+                    <select class="select form-control" id="service_statuses">
+                        {% for status in service_statuses %}
+                            <option value="{{status}}" {% if status == request.GET.status %}selected{% endif %}>{{status}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-sm-2">
+            {% if legend == 'Reported Issues' %}
+                <div class="form-group mb-0">
+                    <label for="service_priorities">Priority</label>
+                    <select class="select form-control" id="service_priorities">
+                        {% for priority in service_priorities %}
+                            <option value="{{priority}}" {% if priority == request.GET.priority %}selected{% endif %}>{{priority}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-sm-6">
+            <h4>
+                {{ legend }} ( {{ objects.count }} )
+                <a class="float-right pt-2 pr-3 text-decoration-none" href="{% url create_url %}" style="font-size: 18px;color: green;">
+                    <span class="oi oi-plus"></span>
+                </a>
+            </h4>
+        </div>
+    </div>
     {% for object in objects %}
         <div class="card m-2" style="width: 100%;">
             <div class="card-body p-2">

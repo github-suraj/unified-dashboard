@@ -1,5 +1,6 @@
 from django import forms
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from . import models
@@ -43,8 +44,20 @@ class IssueListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
-            return models.Issue.objects.all().order_by('-create_date')
-        return models.Issue.objects.filter(author=self.request.user).order_by('-create_date')
+            queryset = models.Issue.objects.all().order_by('-create_date')
+        else:
+            queryset = models.Issue.objects.filter(author=self.request.user).order_by('-create_date')
+
+        if self.request.GET.get('category', 'All') != 'All':
+            category = get_object_or_404(models.Category, name=self.request.GET['category'])
+            queryset = queryset.filter(category=category)
+        if self.request.GET.get('status', 'All') != 'All':
+            status = get_object_or_404(models.Status, name=self.request.GET['status'])
+            queryset = queryset.filter(status=status)
+        if self.request.GET.get('priority', 'All') != 'All':
+            priority = get_object_or_404(models.Priority, name=self.request.GET['priority'])
+            queryset = queryset.filter(priority=priority)
+        return queryset
 
 
 class QueryListView(LoginRequiredMixin, ListView):
@@ -66,8 +79,17 @@ class QueryListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
-            return models.Query.objects.all().order_by('-open_date')
-        return models.Query.objects.filter(author=self.request.user).order_by('-open_date')
+            queryset = models.Query.objects.all().order_by('-open_date')
+        else:
+            queryset = models.Query.objects.filter(author=self.request.user).order_by('-open_date')
+
+        if self.request.GET.get('category', 'All') != 'All':
+            category = get_object_or_404(models.Category, name=self.request.GET['category'])
+            queryset = queryset.filter(category=category)
+        if self.request.GET.get('status', 'All') != 'All':
+            status = get_object_or_404(models.Status, name=self.request.GET['status'])
+            queryset = queryset.filter(status=status)
+        return queryset
 
 
 class FeedbackListView(LoginRequiredMixin, ListView):
@@ -89,8 +111,14 @@ class FeedbackListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('admin') == 'true' and self.request.user.is_superuser:
-            return models.Feedback.objects.all().order_by('-date_posted')
-        return models.Feedback.objects.filter(author=self.request.user).order_by('-date_posted')
+            queryset = models.Feedback.objects.all().order_by('-date_posted')
+        else:
+            queryset = models.Feedback.objects.filter(author=self.request.user).order_by('-date_posted')
+
+        if self.request.GET.get('category', 'All') != 'All':
+            category = get_object_or_404(models.Category, name=self.request.GET['category'])
+            queryset = queryset.filter(category=category)
+        return queryset
 
 
 class IssueCreateView(LoginRequiredMixin, CreateView):
